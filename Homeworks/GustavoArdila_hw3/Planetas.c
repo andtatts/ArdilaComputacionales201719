@@ -2,6 +2,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<math.h>
 int main (void){
     //reads the file and saves data to a matrix
     //creates a pointer in order to save the csv data
@@ -32,10 +33,24 @@ int main (void){
          if(j!=0){
              datos[i][j-1]=atof(split);
              printf("Item in line:%s\n",split);
+             split=strtok(NULL,delim);
          }
-         split=strtok(NULL,delim);
          j+=1;
+         
+         
      }
+        j=0;
         i+=1;
+   
     }
+    printf("masa:%e\n",datos[2][1]);
+    /*
+    funcion a usar es la eq de movimiento para cada planeta
+    
+    create a matrix for each variable, i is planet, j is the time :x,y,z,vx,vy,vz
+    intermediate velocities create just three arrays 
+    
+    create a function for calculating the velocity this will make the sum for x,y and z
+    */
+    
 }
