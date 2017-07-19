@@ -27,9 +27,14 @@ double mass[np];
 void initial_conditions();
 //as the force includes a summatory, as a recomendation from Juan it is better to make functions for each  component
 //each acceleration correspond to a matrix where the rows are the plannets and the columns are the time
-double acc_x(int planeta, int tiempo);
-double acc_y(int planeta, int tiempo);
-double acc_z(int planeta, int tiempo);
+double acc_x(int planeta, int t);
+double acc_y(int planeta, int t);
+double acc_z(int planeta, int t);
+//creates a function that uses leapfrog for calculating the velocities
+double v_x(int planeta, int t);
+double v_y(int planeta, int t);
+double v_z(int planeta, int t);
+
 //on monday Juan gave another suggestion, creating matrices for positions and velocities
 double x[np][iterations];
 double y[np][iterations];
@@ -50,6 +55,8 @@ char *split;
 const char *delim;
 
 int main (void){
+    //starts the initial conditions
+    initial_conditions();
     int length=500;
     //opens the file and reads it
     file=fopen("coordinates.csv","r");
@@ -91,6 +98,7 @@ int main (void){
     create a function for calculating the velocity this will make the sum for x,y and z
     */
     
+    
 }
 void initial_conditions(){
     //sets the time interval
@@ -101,9 +109,68 @@ void initial_conditions(){
     int a;
     //fills the matrices
     for(a=0;a<np;a++){
+        //gets the mass as an array
         mass[k]=datos_true[k][0];
+        //sets the first column of the matrices as the initial condition, suggestion from Juan given on monday
+        x[k][0]=datos_true[k][1];
+        y[k][0]=datos_true[k][2];
+        z[k][0]=datos_true[k][3];
+        vx[k][0]=datos_true[k][4];
+        vy[k][0]=datos_true[k][5];
+        vz[k][0]=datos_true[k][6];
+        
     }
 }
-//double acc_x(int planeta, int tiempo){
+double acc_x(int planeta, int t){
+    //has to loop over all planets except itself
+    int p;
+    for(p=0;p<np;p++){
+        //sets the condition over not calculating its own acceleration
+        if(p==planeta){
+            //searching in the documentation, continue is used to ignore a part in the loop
+            continue;
+        }
+    //calculates the distance, the square root will be implemented using the sqrt function from math.h
+        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t])+pow(z[p][t]-z[planeta][t]));
+    //gets the mass
+        m=mass[p];
+        ax+=G*(m/pow(d,3.0))*(x[p][t]-x[planeta][t]);
     
-//}
+    }
+    return ax;
+}
+double acc_y(int planeta, int t){
+    int p;
+    for(p=0;p<np;p++){
+        //sets the condition over not calculating its own acceleration
+        if(p==planeta){
+            //searching in the documentation, continue is used to ignore a part in the loop
+            continue;
+        }
+    //calculates the distance, the square root will be implemented using the sqrt function from math.h
+        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t])+pow(z[p][t]-z[planeta][t]));
+    //gets the mass
+        m=mass[p];
+        ay+=G*(m/pow(d,3.0))*(y[p][t]-y[planeta][t]);
+    
+    }
+    return ay;
+    
+}
+double acc_z(int planeta, int t){
+    int p;
+    for(p=0;p<np;p++){
+        //sets the condition over not calculating its own acceleration
+        if(p==planeta){
+            //searching in the documentation, continue is used to ignore a part in the loop
+            continue;
+        }
+    //calculates the distance, the square root will be implemented using the sqrt function from math.h
+        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t])+pow(z[p][t]-z[planeta][t]));
+    //gets the mass
+        m=mass[p];
+        az+=G*(m/pow(d,3.0))*(z[p][t]-z[planeta][t]);
+    
+    }
+    return az;
+}
