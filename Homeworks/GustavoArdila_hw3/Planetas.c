@@ -19,7 +19,9 @@ int main (void){
     const char *delim;
     delim=",";
     //initiallize the matrix
-    double **datos;
+    double datos[10][8];
+    double datos_true[10][7];
+
     //initiallize counters for rows and columns
     int i=0;
     int j=0;
@@ -30,27 +32,26 @@ int main (void){
         //splits the data by ","
         split=strtok(line_read,delim);
      while(split!=NULL){
-         
-         datos[i][j-1]=atof(split);
-         printf("Item in line:%s\n",split);
-         split=strtok(NULL,delim);
+         //if(j!=0){
+             datos[i][j]=atof(split);
+             printf("Item in line:%s\n",split);
+             split=strtok(NULL,delim);
+         //}
          j+=1;
-         
          
          
      }
         j=0;
         i+=1;
-        
-        for(i=0;i<10;i++){
+   
+    }
+ 	for(i=0;i<10;i++){
 		for(j=0;j<7;j++){
       			datos_true[i][j]=datos[i][j+1];
       }
 
      }
-   
-    }
-    printf("masa:%e\n",datos[9][1]);
+    printf("masa:%e\n",datos_true[1][0]);
     /*
     funcion a usar es la eq de movimiento para cada planeta
     
