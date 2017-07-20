@@ -90,7 +90,15 @@ int main (void){
       }
 
      }
-    
+    //sun's mass
+    double sol;
+    sol=datos_true[0][0];
+    //change of units in the mass
+    for(i=0;i<10;i++){
+        datos_true[i][0]=datos_true[i][0]/sol;
+    }
+    //initialize the conditions
+    initial_conditions();
     /*
     funcion a usar es la eq de movimiento para cada planeta
     
@@ -108,43 +116,31 @@ int main (void){
     
     int p;
     int q;
-    for(p=0;p<ITERATIONS;p++){
-        for(q=0;q<NP;q++){
-            //adds the data to a new column of the matrix
-            vx[q][p+1]=vx[q][p]+0.5*(acc_x(q,p)+acc_x(q,p+1))*dt;
-        }
-    
-}
-    for(p=0;p<ITERATIONS;p++){
-        for(q=0;q<NP;q++){
-            vy[q][p+1]=vy[q][p]+0.5*(acc_y(q,p)+acc_y(q,p+1))*dt;
-        }
-    }
-    for(p=0;p<ITERATIONS;p++){
-        for(q=0;q<NP;q++){
-            vz[q][p+1]=vz[q][p]+0.5*dt*(acc_z(q,p)+acc_z(q,p+1));
-        }
-    }
     /*
         according to the same wikipedia article the position can be calculated as
         x_(i+1)=x_i+v_i*dt+0.5*a_i*dt^2
         here i means also time
     */
-    for(p=0;p<ITERATIONS;p++){
+    for(p=0;p<ITERATIONS-1;p++){
         for(q=0;q<NP;q++){
             x[q][p+1]=x[q][p]+vx[q][p]*dt+0.5*acc_x(q,p)*pow(dt,2.0);
-        }
-    }
-    for(p=0;p<ITERATIONS;p++){
-        for(q=0;q<NP;q++){
             y[q][p+1]=y[q][p]+vy[q][p]*dt+0.5*acc_y(q,p)*pow(dt,2.0);
-        }
-    }
-    for(p=0;p<ITERATIONS;p++){
-        for(q=0;q<NP;q++){
             z[q][p+1]=z[q][p]+vz[q][p]*dt+0.5*acc_z(q,p)*pow(dt,2.0);
         }
     }
+   
+    for(p=0;p<ITERATIONS-1;p++){
+        for(q=0;q<NP;q++){
+            //adds the data to a new column of the matrix
+            vx[q][p+1]=vx[q][p]+0.5*(acc_x(q,p)+acc_x(q,p+1))*dt;
+            vy[q][p+1]=vy[q][p]+0.5*(acc_y(q,p)+acc_y(q,p+1))*dt;
+            vz[q][p+1]=vz[q][p]+0.5*dt*(acc_z(q,p)+acc_z(q,p+1));
+            
+        }
+    
+    }
+   
+    
     //creates the files
     create_txt();
     //finally after a week of blood and tears the code is finished, thank you R'hollor.
@@ -156,10 +152,13 @@ void initial_conditions(){
     G=4*pow(3.141592,2);
     //sets a counter
     int a;
+    
     //fills the matrices
     for(a=0;a<NP;a++){
         //gets the mass as an array
         mass[a]=datos_true[a][0];
+        
+        
         //sets the first column of the matrices as the initial condition, suggestion from Juan given on monday
         x[a][0]=datos_true[a][1];
         y[a][0]=datos_true[a][2];
@@ -243,21 +242,23 @@ void create_txt(){
     FILE *soly;
     FILE *solz;
     //opens the txt files, saves the data and also reads it using the "w+" parameter
-    solx=fopen("datos_x.csv","w+");
-    soly=fopen("datos_y.csv","w+");
-    solz=fopen("datos_z.csv","w+");
+    solx=fopen("datos_x.txt","w+");
+    soly=fopen("datos_y.txt","w+");
+    solz=fopen("datos_z.txt","w+");
     //saves the data printing it in the file using fprintf looping over all the cols  and then closes it
-    for(int i=0;i<ITERATIONS;i++){
-        fprintf(solx, "%f %f %f %f %f %f %f %f %f %f", x[0][i], x[1][i], x[2][i], x[3][i], x[4][i], x[5][i], x[6][i], x[7][i], x[8][i], x[9][i]);
+    int i;
+    for( i=0;i<ITERATIONS;i++){
+        fprintf(solx, "%f %f %f %f %f %f %f %f %f %f \n", x[0][i], x[1][i], x[2][i], x[3][i], x[4][i], x[5][i], x[6][i], x[7][i], x[8][i], x[9][i]);
     }
-    fclose(solx);
-    for(int i=0;i<ITERATIONS;i++){
-        fprintf(soly, "%f %f %f %f %f %f %f %f %f %f", y[0][i], y[1][i], y[2][i], y[3][i], y[4][i], y[5][i], y[6][i], y[7][i], y[8][i], y[9][i]);
+    for( i=0;i<ITERATIONS;i++){
+        fprintf(soly, "%f %f %f %f %f %f %f %f %f %f \n", y[0][i], y[1][i], y[2][i], y[3][i], y[4][i], y[5][i], y[6][i], y[7][i], y[8][i], y[9][i]);
     }
-    fclose(soly);
-    for(int i=0;i<ITERATIONS;i++){
-        fprintf(solz, "%f %f %f %f %f %f %f %f %f %f", z[0][i], z[1][i], z[2][i], z[3][i], z[4][i], z[5][i], z[6][i], z[7][i], z[8][i], z[9][i]);
+    
+    for(i=0;i<ITERATIONS;i++){
+        fprintf(solz, "%f %f %f %f %f %f %f %f %f %f \n", z[0][i], z[1][i], z[2][i], z[3][i], z[4][i], z[5][i], z[6][i], z[7][i], z[8][i], z[9][i]);
 }
+    fclose(solx);
+    fclose(soly);
     fclose(solz);
 }
 //double v_x(int planeta, int t){
