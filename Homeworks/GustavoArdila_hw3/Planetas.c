@@ -174,3 +174,12 @@ double acc_z(int planeta, int t){
     }
     return az;
 }
+double v_x(int planeta, int t){
+    /*
+        according to wikipedia's article on leapfrog the velocity can be calculated as
+        v_(i+1)=v_i+0.5*(a_i+a_(i+1))*dt
+        where i is the time step
+    */
+    //need to loop over the whole planets
+    
+}
