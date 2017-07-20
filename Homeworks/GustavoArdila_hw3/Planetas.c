@@ -261,6 +261,7 @@ void create_txt(){
     fclose(soly);
     fclose(solz);
 }
+//data is distributed as follows: columns are planets, rows are time steps
 //double v_x(int planeta, int t){
     /*
         according to wikipedia's article on leapfrog the velocity can be calculated as
