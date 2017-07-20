@@ -3,7 +3,10 @@
 #include<stdlib.h>
 #include<string.h>
 #include<math.h>
-
+//define the number of iterations
+#define ITERATIONS 1000
+//define the number of planets given in the csv
+#define NP 10
 //initiallize the matrix, a double matrix was created as suggestion from Santiago Salazar
 double datos[10][8];
 double datos_true[10][7];
@@ -12,19 +15,19 @@ double datos_true[10][7];
 int i=0;
 int j=0;
 //now define the constants used in the functions
-//define the number of iterations
-#define iterations 1000
+
 //time interval between consecutive points
 double dt;
 
-//define the number of planets given in the csv
-#define np 10
+
 //Universal G constant
 double G;
 //masses
-double mass[np];
+double mass[NP];
 //function of the initial conditions
 void initial_conditions();
+//function that creates the files
+void create_txt();
 //as the force includes a summatory, as a recomendation from Juan it is better to make functions for each  component
 //each acceleration correspond to a matrix where the rows are the plannets and the columns are the time
 double acc_x(int planeta, int t);
@@ -36,12 +39,12 @@ double v_y(int planeta, int t);
 double v_z(int planeta, int t);
 
 //on monday Juan gave another suggestion, creating matrices for positions and velocities
-double x[np][iterations];
-double y[np][iterations];
-double z[np][iterations];
-double vx[np][iterations];
-double vy[np][iterations];
-double vz[np][iterations];
+double x[NP][ITERATIONS];
+double y[NP][ITERATIONS];
+double z[NP][ITERATIONS];
+double vx[NP][ITERATIONS];
+double vy[NP][ITERATIONS];
+double vz[NP][ITERATIONS];
 //creates a pointer in order to save the csv data
 FILE *file;
 
@@ -55,8 +58,7 @@ char *split;
 const char *delim;
 
 int main (void){
-    //starts the initial conditions
-    initial_conditions();
+    
     int length=500;
     //opens the file and reads it
     file=fopen("coordinates.csv","r");
@@ -88,7 +90,7 @@ int main (void){
       }
 
      }
-    printf("masa:%e\n",datos_true[1][0]);
+    
     /*
     funcion a usar es la eq de movimiento para cada planeta
     
@@ -103,22 +105,23 @@ int main (void){
         where i is the time 
     */
     //need to loop over the whole planets
+    
     int p;
     int q;
-    for(p=0;p<iterations;p++){
-        for(q=0;q<np;q++){
+    for(p=0;p<ITERATIONS;p++){
+        for(q=0;q<NP;q++){
             //adds the data to a new column of the matrix
             vx[q][p+1]=vx[q][p]+0.5*(acc_x(q,p)+acc_x(q,p+1))*dt;
         }
     
 }
-    for(p=0;p<iterations;p++){
-        for(q=0;q<np;q++){
+    for(p=0;p<ITERATIONS;p++){
+        for(q=0;q<NP;q++){
             vy[q][p+1]=vy[q][p]+0.5*(acc_y(q,p)+acc_y(q,p+1))*dt;
         }
     }
-    for(p=0;p<iterations;p++){
-        for(q=0;q<np;q++){
+    for(p=0;p<ITERATIONS;p++){
+        for(q=0;q<NP;q++){
             vz[q][p+1]=vz[q][p]+0.5*dt*(acc_z(q,p)+acc_z(q,p+1));
         }
     }
@@ -127,31 +130,34 @@ int main (void){
         x_(i+1)=x_i+v_i*dt+0.5*a_i*dt^2
         here i means also time
     */
-    for(p=0;p<iterations;p++){
-        for(q=0;q<np;q++){
+    for(p=0;p<ITERATIONS;p++){
+        for(q=0;q<NP;q++){
             x[q][p+1]=x[q][p]+vx[q][p]*dt+0.5*acc_x(q,p)*pow(dt,2.0);
         }
     }
-    for(p=0;p<iterations;p++){
-        for(q=0;q<np;q++){
+    for(p=0;p<ITERATIONS;p++){
+        for(q=0;q<NP;q++){
             y[q][p+1]=y[q][p]+vy[q][p]*dt+0.5*acc_y(q,p)*pow(dt,2.0);
         }
     }
-    for(p=0;p<iterations;p++){
-        for(q=0;q<np;q++){
+    for(p=0;p<ITERATIONS;p++){
+        for(q=0;q<NP;q++){
             z[q][p+1]=z[q][p]+vz[q][p]*dt+0.5*acc_z(q,p)*pow(dt,2.0);
         }
     }
+    //creates the files
+    create_txt();
+    //finally after a week of blood and tears the code is finished, thank you R'hollor.
 }
 void initial_conditions(){
     //sets the time interval
-    dt=0.03;
+    dt=0.0003;
     //universal constant value, Juan suggested on monday to use 4*pi^2
-    G=4*pow(3.14159265358979323846264,2.0);
+    G=4*pow(3.141592,2);
     //sets a counter
     int a;
     //fills the matrices
-    for(a=0;a<np;a++){
+    for(a=0;a<NP;a++){
         //gets the mass as an array
         mass[a]=datos_true[a][0];
         //sets the first column of the matrices as the initial condition, suggestion from Juan given on monday
@@ -170,37 +176,40 @@ double acc_x(int planeta, int t){
     double d;
     double m;
     double ax=0;
-    for(p=0;p<np;p++){
+    for(p=0;p<NP;p++){
         //sets the condition over not calculating its own acceleration
         if(p==planeta){
             //searching in the documentation, continue is used to ignore a part in the loop
             continue;
         }
     //calculates the distance, the square root will be implemented using the sqrt function from math.h
-        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t],2.0)+pow(z[p][t]-z[planeta][t],2.0));
+        d=sqrt(pow(x[p][t]-x[planeta][t],2)+pow(y[p][t]-y[planeta][t],2)+pow(z[p][t]-z[planeta][t],2));
     //gets the mass
         m=mass[p];
-        ax+=G*(m/pow(d,3.0))*(x[p][t]-x[planeta][t]);
+        ax+=G*(m/pow(d,3))*(x[p][t]-x[planeta][t]);
     
     }
+    
     return ax;
+    
 }
+//printf(" the acceleration is %f",acc_x(0,1));
 double acc_y(int planeta, int t){
     int p;
     double d;
     double m;
     double ay=0;
-    for(p=0;p<np;p++){
+    for(p=0;p<NP;p++){
         //sets the condition over not calculating its own acceleration
         if(p==planeta){
             //searching in the documentation, continue is used to ignore a part in the loop
             continue;
         }
     //calculates the distance, the square root will be implemented using the sqrt function from math.h
-        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t],2.0)+pow(z[p][t]-z[planeta][t],2.0));
+        d=sqrt(pow(x[p][t]-x[planeta][t],2)+pow(y[p][t]-y[planeta][t],2)+pow(z[p][t]-z[planeta][t],2));
     //gets the mass
         m=mass[p];
-        ay+=G*(m/pow(d,3.0))*(y[p][t]-y[planeta][t]);
+        ay+=G*(m/pow(d,3))*(y[p][t]-y[planeta][t]);
     
     }
     return ay;
@@ -211,20 +220,45 @@ double acc_z(int planeta, int t){
     double d;
     double m;
     double az=0;
-    for(p=0;p<np;p++){
+    for(p=0;p<NP;p++){
         //sets the condition over not calculating its own acceleration
         if(p==planeta){
             //searching in the documentation, continue is used to ignore a part in the loop
             continue;
         }
     //calculates the distance, the square root will be implemented using the sqrt function from math.h
-        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t],2.0)+pow(z[p][t]-z[planeta][t],2.0));
+        d=sqrt(pow(x[p][t]-x[planeta][t],2)+pow(y[p][t]-y[planeta][t],2)+pow(z[p][t]-z[planeta][t],2));
     //gets the mass
         m=mass[p];
-        az+=G*(m/pow(d,3.0))*(z[p][t]-z[planeta][t]);
+        az+=G*(m/pow(d,3))*(z[p][t]-z[planeta][t]);
     
     }
     return az;
+}
+void create_txt(){
+    //searching in tutorial points it can be seen that a file would be written when using fopen function
+    //creates the pointers for each file
+    //only position data will be saved
+    FILE *solx;
+    FILE *soly;
+    FILE *solz;
+    //opens the txt files, saves the data and also reads it using the "w+" parameter
+    solx=fopen("datos_x.csv","w+");
+    soly=fopen("datos_y.csv","w+");
+    solz=fopen("datos_z.csv","w+");
+    //saves the data printing it in the file using fprintf looping over all the cols  and then closes it
+    for(int i=0;i<ITERATIONS;i++){
+        fprintf(solx, "%f %f %f %f %f %f %f %f %f %f", x[0][i], x[1][i], x[2][i], x[3][i], x[4][i], x[5][i], x[6][i], x[7][i], x[8][i], x[9][i]);
+    }
+    fclose(solx);
+    for(int i=0;i<ITERATIONS;i++){
+        fprintf(soly, "%f %f %f %f %f %f %f %f %f %f", y[0][i], y[1][i], y[2][i], y[3][i], y[4][i], y[5][i], y[6][i], y[7][i], y[8][i], y[9][i]);
+    }
+    fclose(soly);
+    for(int i=0;i<ITERATIONS;i++){
+        fprintf(solz, "%f %f %f %f %f %f %f %f %f %f", z[0][i], z[1][i], z[2][i], z[3][i], z[4][i], z[5][i], z[6][i], z[7][i], z[8][i], z[9][i]);
+}
+    fclose(solz);
 }
 //double v_x(int planeta, int t){
     /*
