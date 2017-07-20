@@ -147,7 +147,7 @@ int main (void){
 }
 void initial_conditions(){
     //sets the time interval
-    dt=0.0003;
+    dt=0.00003;
     //universal constant value, Juan suggested on monday to use 4*pi^2
     G=4*pow(3.141592,2);
     //sets a counter
