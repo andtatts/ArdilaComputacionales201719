@@ -100,7 +100,7 @@ int main (void){
      /*
         according to wikipedia's article on leapfrog the velocity can be calculated as
         v_(i+1)=v_i+0.5*(a_i+a_(i+1))*dt
-        where i is the time step
+        where i is the time 
     */
     //need to loop over the whole planets
     int p;
@@ -120,6 +120,26 @@ int main (void){
     for(p=0;p<iterations;p++){
         for(q=0;q<np;q++){
             vz[q][p+1]=vz[q][p]+0.5*dt*(acc_z(q,p)+acc_z(q,p+1));
+        }
+    }
+    /*
+        according to the same wikipedia article the position can be calculated as
+        x_(i+1)=x_i+v_i*dt+0.5*a_i*dt^2
+        here i means also time
+    */
+    for(p=0;p<iterations;p++){
+        for(q=0;q<np;q++){
+            x[q][p+1]=x[q][p]+vx[q][p]*dt+0.5*acc_x(q,p)*pow(dt,2.0);
+        }
+    }
+    for(p=0;p<iterations;p++){
+        for(q=0;q<np;q++){
+            y[q][p+1]=y[q][p]+vy[q][p]*dt+0.5*acc_y(q,p)*pow(dt,2.0);
+        }
+    }
+    for(p=0;p<iterations;p++){
+        for(q=0;q<np;q++){
+            z[q][p+1]=z[q][p]+vz[q][p]*dt+0.5*acc_z(q,p)*pow(dt,2.0);
         }
     }
 }
