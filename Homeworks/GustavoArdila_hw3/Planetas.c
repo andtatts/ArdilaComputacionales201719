@@ -39,9 +39,9 @@ double v_z(int planeta, int t);
 double x[np][iterations];
 double y[np][iterations];
 double z[np][iterations];
-double v_x[np][iterations];
-double v_y[np][iterations];
-double v_z[np][iterations];
+double vx[np][iterations];
+double vy[np][iterations];
+double vz[np][iterations];
 //creates a pointer in order to save the csv data
 FILE *file;
 
@@ -97,8 +97,31 @@ int main (void){
     
     create a function for calculating the velocity this will make the sum for x,y and z
     */
+     /*
+        according to wikipedia's article on leapfrog the velocity can be calculated as
+        v_(i+1)=v_i+0.5*(a_i+a_(i+1))*dt
+        where i is the time step
+    */
+    //need to loop over the whole planets
+    int p;
+    int q;
+    for(p=0;p<iterations;p++){
+        for(q=0;q<np;q++){
+            //adds the data to a new column of the matrix
+            vx[q][p+1]=vx[q][p]+0.5*(acc_x(q,p)+acc_x(q,p+1))*dt;
+        }
     
-    
+}
+    for(p=0;p<iterations;p++){
+        for(q=0;q<np;q++){
+            vy[q][p+1]=vy[q][p]+0.5*(acc_y(q,p)+acc_y(q,p+1))*dt;
+        }
+    }
+    for(p=0;p<iterations;p++){
+        for(q=0;q<np;q++){
+            vz[q][p+1]=vz[q][p]+0.5*dt*(acc_z(q,p)+acc_z(q,p+1));
+        }
+    }
 }
 void initial_conditions(){
     //sets the time interval
@@ -110,20 +133,23 @@ void initial_conditions(){
     //fills the matrices
     for(a=0;a<np;a++){
         //gets the mass as an array
-        mass[k]=datos_true[k][0];
+        mass[a]=datos_true[a][0];
         //sets the first column of the matrices as the initial condition, suggestion from Juan given on monday
-        x[k][0]=datos_true[k][1];
-        y[k][0]=datos_true[k][2];
-        z[k][0]=datos_true[k][3];
-        vx[k][0]=datos_true[k][4];
-        vy[k][0]=datos_true[k][5];
-        vz[k][0]=datos_true[k][6];
+        x[a][0]=datos_true[a][1];
+        y[a][0]=datos_true[a][2];
+        z[a][0]=datos_true[a][3];
+        vx[a][0]=datos_true[a][4];
+        vy[a][0]=datos_true[a][5];
+        vz[a][0]=datos_true[a][6];
         
     }
 }
 double acc_x(int planeta, int t){
     //has to loop over all planets except itself
     int p;
+    double d;
+    double m;
+    double ax=0;
     for(p=0;p<np;p++){
         //sets the condition over not calculating its own acceleration
         if(p==planeta){
@@ -131,7 +157,7 @@ double acc_x(int planeta, int t){
             continue;
         }
     //calculates the distance, the square root will be implemented using the sqrt function from math.h
-        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t])+pow(z[p][t]-z[planeta][t]));
+        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t],2.0)+pow(z[p][t]-z[planeta][t],2.0));
     //gets the mass
         m=mass[p];
         ax+=G*(m/pow(d,3.0))*(x[p][t]-x[planeta][t]);
@@ -141,6 +167,9 @@ double acc_x(int planeta, int t){
 }
 double acc_y(int planeta, int t){
     int p;
+    double d;
+    double m;
+    double ay=0;
     for(p=0;p<np;p++){
         //sets the condition over not calculating its own acceleration
         if(p==planeta){
@@ -148,7 +177,7 @@ double acc_y(int planeta, int t){
             continue;
         }
     //calculates the distance, the square root will be implemented using the sqrt function from math.h
-        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t])+pow(z[p][t]-z[planeta][t]));
+        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t],2.0)+pow(z[p][t]-z[planeta][t],2.0));
     //gets the mass
         m=mass[p];
         ay+=G*(m/pow(d,3.0))*(y[p][t]-y[planeta][t]);
@@ -159,6 +188,9 @@ double acc_y(int planeta, int t){
 }
 double acc_z(int planeta, int t){
     int p;
+    double d;
+    double m;
+    double az=0;
     for(p=0;p<np;p++){
         //sets the condition over not calculating its own acceleration
         if(p==planeta){
@@ -166,7 +198,7 @@ double acc_z(int planeta, int t){
             continue;
         }
     //calculates the distance, the square root will be implemented using the sqrt function from math.h
-        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t])+pow(z[p][t]-z[planeta][t]));
+        d=sqrt(pow(x[p][t]-x[planeta][t],2.0)+pow(y[p][t]-y[planeta][t],2.0)+pow(z[p][t]-z[planeta][t],2.0));
     //gets the mass
         m=mass[p];
         az+=G*(m/pow(d,3.0))*(z[p][t]-z[planeta][t]);
@@ -174,12 +206,16 @@ double acc_z(int planeta, int t){
     }
     return az;
 }
-double v_x(int planeta, int t){
+//double v_x(int planeta, int t){
     /*
         according to wikipedia's article on leapfrog the velocity can be calculated as
         v_(i+1)=v_i+0.5*(a_i+a_(i+1))*dt
         where i is the time step
     */
     //need to loop over the whole planets
-    
-}
+    //int p;
+    //for(p=0;p<np;p++){
+      //  vx[p][]
+    //}
+    //tried setting it as a function but got confused so I worked it on the main function
+//}
