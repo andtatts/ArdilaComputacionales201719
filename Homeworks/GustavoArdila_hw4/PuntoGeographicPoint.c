@@ -20,7 +20,7 @@ void read_file(){
     FILE *file;
     file=fopen("map_data.txt","r");
     const char *delim;
-    delim=",";
+    delim=" ";
     char *split;
     char line_buffer[800];
     int i;
@@ -39,11 +39,32 @@ void read_file(){
 }
 //metropolis hastings to be implemented for the area
 double area(int x0, int y0){
-    double r=0;
-    area=pi*pow(r,2);
+    int x=x0;
+    int y=y0;
+    int r=0;
+    double area;
+    //checks if the circle surpasses the box, idea from Santiago Salazar
+    while(data[x+r][y]!=1&& data[x-r][y]!=1 && data[x][y+r]!=1 && data[x][y-r]!=1){
+    if(y+r>= cols-1){
+         y=0;
+     }  
+    if(y-r<0){
+        y=cols-1;
+    }
+    if(x-r<0){
+        break;
+    }
+    if(x+r>=rows-1){
+        break;
+    }
     
+    r+=1;
+    }
+    area=pi*pow(r,2);
+    return area;
 }
 int main(){
+    initial();
     read_file();
     return 0;
 }
