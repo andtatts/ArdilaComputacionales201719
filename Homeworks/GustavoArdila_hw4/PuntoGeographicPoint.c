@@ -149,9 +149,9 @@ int main(){
     //iterates using metropolis hastings algorithm
     int k;
     //creates a counter to count the number of zeros in the circle
-    int count=0;
+    int rad=0;
     for(k=0;k<iterations;k++){
-        count+=1;
+        rad+=1;
         //tstx= (int)random_normal(c_x);
         //tsty= (int)random_normal(c_y);
         tstx=(rows-1)*drand48();
@@ -197,15 +197,13 @@ int main(){
             continue;
         }
         
-        if(c_x>=500){
-            c_x=c_x-c_xp;
-        }
-        if(c_y>=744){
-            c_y=c_y-c_yp;
-        }
+       
         
     }
-    printf("%d %d \n",c_x,c_y);
-    
+    //printf("%d %d %d \n",c_x,c_y,rad);
+    FILE *coordinates;
+    coordinates= fopen("coordinates.txt","w+");
+    fprintf(coordinates,"%d %d %d \n",c_x,c_y,rad);
+    fclose(coordinates);
     return 0;
 }
