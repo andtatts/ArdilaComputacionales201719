@@ -10,18 +10,29 @@
 //creates a pointer in order to create the matrix
 int **data;
 //test variables
+/*
 float tstx;
 float tsty;
-float tsta;
+float tsta;*/
+int tstx;
+int tsty;
+double tsta;
 //variables from the initial step
+/*
 float c_x;
 float c_y;
-float c_a;
+float c_a;*/
+int c_x;
+int c_y;
+double c_a;
 //M-H variabñes
 float alpha;
 float beta;
 //creates a function to read the file in order to make the main as simple as possible
 void initial(){
+    alpha=0;
+    beta=0;
+    c_a=0;
     int i;
     data=malloc(rows*sizeof(int *));
     for(i=0;i<rows;i++){
@@ -99,10 +110,15 @@ int main(){
     read_file();
     /*
     Metropolis Hastings:
-    Take an initial step within the box, dont include the 0th 
+    Take an initial step within the box, dont include the 0th because it's the 0th col or row
     */
-    c_x=(int)(rows-2)*rand()/RAND_MAX;
+    c_x=(int)(rows-1)*rand()/RAND_MAX;
     c_y=(int)(cols-1)*rand()/RAND_MAX;
+    //checks if the random numbers are different to 1
+    if(data[c_x][c_y]==1){
+        c_x=(int)(rows-2)*rand()/RAND_MAX;
+        c_y=(int)(cols-1)*rand()/RAND_MAX;
+    }
     //calculate the area
     c_a=area(c_x,c_y);
     //iterates using metropolis hastings algorithm
@@ -110,11 +126,31 @@ int main(){
     //creates a counter to count the number of zeros in the circle
     int count=0;
     for(k=0;k<iterations;k++){
-        counter+=1;
+        count+=1;
         tstx= (int)random_normal(c_x);
-        tsty= (int)random(c_y);
-        tsta= area(tstx,tsty);
-        
-    }
+        tsty= (int)random_normal(c_y);
+        //tsta= area(tstx,tsty);
+        //checks the condition of non producing a 1 or being out of bounds
+        if(data[tstx][tsty]==1||tstx+1>rows||tsty+1>cols|| tstx<0||tsty<0){
+             tstx= (int)random_normal(c_x);
+            tsty= (int)random_normal(c_y);
+        }
+        //gets the area of the test point
+        tsta=area(tstx,tsty);
+        //calculates the alpha from MH
+        alpha=tsta/c_a;
+        //checks the condition on alpha
+        if(alpha>1){
+            c_x=tstx;
+            c_y=tsty;
+            c_a=tsta;
+        }
+        //if not followed check beta
+        else{
+            //where is it centered?
+            beta=(int) random_normal()
+        }
+        }
+    
     return 0;
 }
