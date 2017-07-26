@@ -97,8 +97,8 @@ double area(int x0, int y0){
     
     return area;
 }
-// generates random numbers from normal distribution, based on https://rosettacode.org/wiki/Statistics/Normal_distribution#C and https://phoxis.org/2013/05/04/generating-random-numbers-from-normal-distribution-in-c/
-double random_normal(int mu){
+// generates random numbers from normal distribution, based on and https://phoxis.org/2013/05/04/generating-random-numbers-from-normal-distribution-in-c/
+/*double random_normal(int mu){
     double sigma=1.0;
     double x1,x;
     double y1,y;
@@ -110,27 +110,29 @@ double random_normal(int mu){
     while(z>=1.0||z==0.0){
         x1=2.0*(double)rand()/RAND_MAX -1.0;
         y1=2.0*(double)rand()/RAND_MAX -1.0;
-        z=pow(x,2)+pow(y,2);
+        z=pow(x1,2)+pow(y1,2);
        
     }
     p=sqrt(-2.0*log(z)/z);
     x=x1*p;
    double m=mu+sigma*x;
     return m;
-}
+}*/
 //tried implementing MH algorithm in a function but got confused so will implemeted in the main function
 int main(){
     initial();
     read_file();
     
     printf("wiiii\n");
-    
+    int c_xp=500;
+    int c_yp=744;
     /*
     Metropolis Hastings:
     Take an initial step within the box, dont include the 0th because it's the 0th col or row
     */
     //SEEDS
     srand(time(NULL));
+    srand48(time(NULL));
     c_x=(int)(rows-1)*(double)rand()/RAND_MAX;
     c_y=(int)(cols-1)*(double)rand()/RAND_MAX;
     printf("%d %d \n", c_x,c_y);
@@ -139,7 +141,7 @@ int main(){
     while(data[c_x][c_y]==1){
         c_x=(int)(rows-2)*(double)rand()/RAND_MAX;
         c_y=(int)(cols-1)*(double)rand()/RAND_MAX;
-        printf("%d %d ",c_x,c_y);
+        //printf("%d %d ",c_x,c_y);
     }
     //calculate the area
     c_a=area(c_x,c_y);
@@ -150,14 +152,19 @@ int main(){
     int count=0;
     for(k=0;k<iterations;k++){
         count+=1;
-        tstx= (int)random_normal(c_x);
-        tsty= (int)random_normal(c_y);
+        //tstx= (int)random_normal(c_x);
+        //tsty= (int)random_normal(c_y);
+        tstx=(rows-1)*drand48();
+        tsty=(cols-1)*drand48();
+        //printf("%d %d",tstx,tsty);
         tsta= area(tstx,tsty);
         //checks the condition of non producing a 1 or being out of bounds
         while(data[tstx][tsty]==1||tstx+1>rows||tsty+1>cols|| tstx<0||tsty<0){
-             tstx= (int)random_normal(c_x);
-             tsty= (int)random_normal(c_y);
-            printf("%d %d",tstx,tsty);
+             //tstx= (int)random_normal(c_x);
+             //tsty= (int)random_normal(c_y);
+             tstx=(rows-1)*drand48();
+            tsty=(cols-1)*drand48();
+            //printf("%d %d",tstx,tsty);
         }
         //gets the area of the test point
         tsta=area(tstx,tsty);
@@ -173,7 +180,8 @@ int main(){
         //if not followed check beta
         else{
             //where is it centered?
-            beta=(double) rand()/RAND_MAX;
+            //beta=(double) rand()/RAND_MAX;
+            beta=(double)drand48();
             if(beta<alpha){
                 c_x=tstx;
                 c_y=tsty;
@@ -185,6 +193,17 @@ int main(){
                 c_a=c_a;
             }
         }
+        if(data[c_x][c_y]==1){
+            continue;
+        }
+        
+        if(c_x>=500){
+            c_x=c_x-c_xp;
+        }
+        if(c_y>=744){
+            c_y=c_y-c_yp;
+        }
+        
     }
     printf("%d %d \n",c_x,c_y);
     
