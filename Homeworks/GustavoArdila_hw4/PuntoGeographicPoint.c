@@ -6,7 +6,7 @@
 #define rows 500
 #define cols 744
 #define pi 3.1415926535
-#define iterations 380000
+#define iterations 372000
 //creates a pointer in order to create the matrix
 int **data;
 //test variables
