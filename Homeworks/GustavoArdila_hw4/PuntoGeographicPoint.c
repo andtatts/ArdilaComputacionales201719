@@ -86,7 +86,7 @@ double area(int x0, int y0){
     area=pi*pow(r,2);
     return area;
 }
-// generates random numbers from normal distribution, based on https://rosettacode.org/wiki/Statistics/Normal_distribution#C
+// generates random numbers from normal distribution, based on https://rosettacode.org/wiki/Statistics/Normal_distribution#C and https://phoxis.org/2013/05/04/generating-random-numbers-from-normal-distribution-in-c/
 double random_normal(int mu){
     double sigma=1.0;
     double x1,x;
