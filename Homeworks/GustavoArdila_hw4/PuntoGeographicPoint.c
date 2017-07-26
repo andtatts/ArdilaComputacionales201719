@@ -200,10 +200,11 @@ int main(){
        
         
     }
-    //printf("%d %d %d \n",c_x,c_y,rad);
-    FILE *coordinates;
+    printf("%d %d %d \n",c_x,c_y,rad);
+    /*FILE *coordinates;
     coordinates= fopen("coordinates.txt","w+");
     fprintf(coordinates,"%d %d %d \n",c_x,c_y,rad);
     fclose(coordinates);
+    */
     return 0;
 }
