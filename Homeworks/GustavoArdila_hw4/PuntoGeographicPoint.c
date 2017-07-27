@@ -123,7 +123,7 @@ int main(){
     initial();
     read_file();
     
-    printf("wiiii\n");
+    //printf("wiiii\n");
     int c_xp=500;
     int c_yp=744;
     /*
@@ -135,7 +135,7 @@ int main(){
     srand48(time(NULL));
     c_x=(int)(rows-1)*(double)rand()/RAND_MAX;
     c_y=(int)(cols-1)*(double)rand()/RAND_MAX;
-    printf("%d %d \n", c_x,c_y);
+    //printf("%d %d \n", c_x,c_y);
     //checks if the random numbers are different to 1
     //if(data[c_x][c_y]==1){
     while(data[c_x][c_y]==1){
@@ -200,7 +200,7 @@ int main(){
        
         
     }
-    printf("%d %d %d \n",c_x,c_y,rad);
+    printf(" Las coordenadas del punto son: (%d, %d) \n",c_x,c_y);
     FILE *coordinates;
     coordinates= fopen("coordinates.txt","w+");
     fprintf(coordinates,"%d %d %d \n",c_x,c_y,rad);
